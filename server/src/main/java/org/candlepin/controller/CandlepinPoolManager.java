@@ -1235,6 +1235,7 @@ public class CandlepinPoolManager implements PoolManager {
         List<Pool> poolsToDelete = poolCurator.listBySourceEntitlements(entsToRevoke);
 
         for (Pool pool : poolsToDelete) {
+            poolCurator.lock(pool);
             entsToRevoke.addAll(pool.getEntitlements());
         }
 

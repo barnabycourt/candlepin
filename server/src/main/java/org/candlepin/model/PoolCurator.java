@@ -29,6 +29,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Filter;
 import org.hibernate.Hibernate;
+import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.ReplicationMode;
@@ -51,6 +52,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.persistence.LockModeType;
 
 /**
  * EntitlementPoolCurator
@@ -636,6 +639,7 @@ public class PoolCurator extends AbstractHibernateCurator<Pool> {
                     Restrictions.isNotNull("sourceSub.subscriptionId")));
         }
         crit.addOrder(Order.asc("id"));
+
         return crit.list();
     }
 
@@ -658,5 +662,9 @@ public class PoolCurator extends AbstractHibernateCurator<Pool> {
                 .add(Restrictions.isNull("sourceSub.subscriptionId"))
                 .addOrder(Order.asc("id"))
                 .list();
+    }
+
+    public void lock(Pool pool) {
+        getEntityManager().lock(pool, LockModeType.PESSIMISTIC_WRITE);
     }
 }
