@@ -246,9 +246,20 @@ public class Pool extends AbstractHibernateObject implements Persisted, Owned, N
     @NotNull
     private Product product;
 
+    @OneToMany
+    @JoinColumn(name = "product_uuid")
+    @LazyCollection(LazyCollectionOption.EXTRA) // allows .size() without loading all data
+    private Set<ProductAttribute> productAttributes;
+
     @ManyToOne
     @JoinColumn(name = "derived_product_uuid")
     private Product derivedProduct;
+
+    @OneToMany
+    @JoinColumn(name = "product_uuid")
+    @Column(name="derived_product_uuid")
+    @LazyCollection(LazyCollectionOption.EXTRA) // allows .size() without loading all data
+    private Set<ProductAttribute> derivedProductAttributes;
 
     @ManyToMany
     @JoinTable(
@@ -971,15 +982,17 @@ public class Pool extends AbstractHibernateObject implements Persisted, Owned, N
     }
 
     public Set<ProductAttribute> getProductAttributes() {
-        return this.getProduct() != null ?
-            this.getProduct().getAttributes() :
-            new HashSet<ProductAttribute>();
+        return this.productAttributes;
+        // return this.getProduct() != null ?
+        //     this.getProduct().getAttributes() :
+        //     new HashSet<ProductAttribute>();
     }
 
     public Set<ProductAttribute> getDerivedProductAttributes() {
-        return this.getDerivedProduct() != null ?
-            this.getDerivedProduct().getAttributes() :
-            new HashSet<ProductAttribute>();
+        return this.derivedProductAttributes;
+        // return this.getDerivedProduct() != null ?
+        //     this.getDerivedProduct().getAttributes() :
+        //     new HashSet<ProductAttribute>();
     }
 
     @XmlTransient
